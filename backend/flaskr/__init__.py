@@ -39,9 +39,10 @@ def create_app(test_config=None):
         offset = (page - 1) * limit if page>0 else 0
         books = [book.format() for book in Book.query.offset(offset).limit(limit).all()]
         return jsonify({
-          "totalBooks": Book.query.count(),
-          "books": books,
-          "page": page
+            "success" : True,
+            "totalBooks": Book.query.count(),
+            "books": books,
+            "page": page
         })
 
     # @TODO: Write a route that retrivies all books, paginated.
