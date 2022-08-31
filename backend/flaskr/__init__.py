@@ -48,18 +48,21 @@ def create_app(test_config=None):
     @app.route('/books/<int:book_id>',methods=['PATCH'])
     def update_book_rating(book_id):
         try:
-            rating = request.form.get('rating')
+            data = request.json
+            rating=data['rating']
             book = Book.query.get(book_id)
             book.rating = rating
+            db.session.add(book)
             db.session.commit()
             return jsonify({
                 "success" : True,
             })
-        except:
+        except Exception as e:
+            print(e)
             return jsonify({
                 "success" : False,
                 "message" : "Your request did not provided requested datas"
-            }),400
+            }),200
     
     @app.route('/books/<int:book_id>',methods=['DELETE'])
     def delete_book(book_id):
@@ -76,6 +79,31 @@ def create_app(test_config=None):
                 "message" : "Your request did not succeed"
             }),400
 
+    @app.route('/books', methods=['POST'])
+    def add_new_book():
+        datas = request.json
+        try:
+            book = Book(
+                author = datas["author"],
+                title = datas["title"],
+                rating = datas["rating"],
+            )
+            db.session.add(book)
+            db.session.commit()
+            return jsonify({
+                "success" : True,
+                "created" : book.id,
+                "books" : [book.format() for book in Book.query.all()],
+                "total_books" : Book.query.count(),
+            })
+        except Exception as e:
+            print(e)
+            return jsonify({
+                "success" : False,
+                "message" : "Your request did not succeed"
+            }),400
+    
+
     # DONE: @TODO: Write a route that retrivies all books, paginated.
     #         You can use the constant above to paginate by eight books.
     #         If you decide to change the number of books per page,
@@ -89,7 +117,7 @@ def create_app(test_config=None):
     #         Response body keys: 'success'
     # TEST: When completed, you will be able to click on stars to update a book's rating and it will persist after refresh
 
-    # @TODO: Write a route that will delete a single book.
+    # DONE: @TODO: Write a route that will delete a single book.
     #        Response body keys: 'success', 'deleted'(id of deleted book), 'books' and 'total_books'
     #        Response body keys: 'success', 'books' and 'total_books'
 
