@@ -54,22 +54,36 @@ def create_app(test_config=None):
             db.session.commit()
             return jsonify({
                 "success" : True,
-                "message" : f"Rating update successfull for {book_id}"
             })
         except:
             return jsonify({
                 "success" : False,
                 "message" : "Your request did not provided requested datas"
             }),400
+    
+    @app.route('/books/<int:book_id>',methods=['DELETE'])
+    def delete_book(book_id):
+        try:
+            book = Book.query.get(book_id)
+            db.session.delete(book)
+            db.session.commit()
+            return jsonify({
+                "success" : True,
+            })
+        except:
+            return jsonify({
+                "success" : False,
+                "message" : "Your request did not succeed"
+            }),400
 
-    # @TODO: Write a route that retrivies all books, paginated.
+    # DONE: @TODO: Write a route that retrivies all books, paginated.
     #         You can use the constant above to paginate by eight books.
     #         If you decide to change the number of books per page,
     #         update the frontend to handle additional books in the styling and pagination
     #         Response body keys: 'success', 'books' and 'total_books'
     # TEST: When completed, the webpage will display books including title, author, and rating shown as stars
 
-    # @TODO: Write a route that will update a single book's rating.
+    # DONE : @TODO: Write a route that will update a single book's rating.
     #         It should only be able to update the rating, not the entire representation
     #         and should follow API design principles regarding method and route.
     #         Response body keys: 'success'
