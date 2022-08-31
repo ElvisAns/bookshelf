@@ -17,7 +17,7 @@ class FormView extends Component {
   submitBook = (event) => {
     event.preventDefault();
     $.ajax({
-      url: '/books', //TODO: update request URL
+      url: 'http://127.0.0.1:9000/books', //TODO: update request URL
       type: "POST",
       dataType: 'json',
       contentType: 'application/json',
@@ -26,10 +26,6 @@ class FormView extends Component {
         author: this.state.author,
         rating: this.state.rating,
       }),
-      xhrFields: {
-        withCredentials: true
-      },
-      crossDomain: true,
       success: (result) => {
         document.getElementById("add-book-form").reset();
         return;
