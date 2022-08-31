@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy  # , or_
 from flask_cors import CORS
 import random
 
-from models import setup_db, Book
+from models import setup_db,db, Book
 
 BOOKS_PER_SHELF = 8
 
@@ -19,7 +19,7 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
     setup_db(app)
-    CORS(app)
+    cors = CORS(app,resources={r"/*": {"origins": "http://localhost:3000"}})
 
     # CORS Headers
     @app.after_request
@@ -44,6 +44,23 @@ def create_app(test_config=None):
             "books": books,
             "page": page
         })
+
+    @app.route('/books/<int:book_id>',methods=['PATCH'])
+    def update_book_rating(book_id):
+        try:
+            rating = request.form.get('rating')
+            book = Book.query.get(book_id)
+            book.rating = rating
+            db.session.commit()
+            return jsonify({
+                "success" : True,
+                "message" : f"Rating update successfull for {book_id}"
+            })
+        except:
+            return jsonify({
+                "success" : False,
+                "message" : "Your request did not provided requested datas"
+            }),400
 
     # @TODO: Write a route that retrivies all books, paginated.
     #         You can use the constant above to paginate by eight books.
