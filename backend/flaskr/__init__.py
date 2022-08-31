@@ -31,6 +31,15 @@ def create_app(test_config=None):
             "Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS"
         )
         return response
+    
+    @app.errorhandler(404)
+    def not_found(error):
+        print(error)
+        return jsonify({
+            "success" : False,
+            "error" : 404,
+            "message" : "content Not found"
+        })
 
     @app.route('/books', methods=['GET'])
     def get_all_books():
