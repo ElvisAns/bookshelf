@@ -47,6 +47,9 @@ def create_app(test_config=None):
         limit = BOOKS_PER_SHELF
         offset = (page - 1) * limit if page>0 else 0
         books = [book.format() for book in Book.query.offset(offset).limit(limit).all()]
+        if len(books) < 1 :
+            abort(404)
+            
         return jsonify({
             "success" : True,
             "totalBooks": Book.query.count(),
