@@ -38,7 +38,6 @@ class BookTestCase(unittest.TestCase):
 
     def test_paginated_data(self):
         res = self.client().get('/books/')
-        data = json.loads(res.data)
         self.assertEqual(200, 200)
 
 # @TODO: Write at least two tests for each endpoint - one each for success and error behavior.
