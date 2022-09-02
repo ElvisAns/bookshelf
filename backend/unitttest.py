@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from flaskr import create_app
 from models import setup_db, Book
+from random import seed,randint
 
 
 class BookTestCase(unittest.TestCase):
@@ -73,6 +74,16 @@ class BookTestCase(unittest.TestCase):
             
     def test_search_book_should_be_case_insensitive(self):
         res = self.client().get(f'/books?title={self.new_book["title"].lower()}')
+        data = json.loads(res.data)
+        self.assertEqual(200, res.status_code)
+        self.assertGreaterEqual(1,data["results"])
+        self.assertEqual(self.new_book["title"], data["books"][0]["title"])
+
+               
+    def test_search_book_should_match_anysubstring(self):
+        seed(1)
+        fullString = self.new_book["title"].lower()
+        res = self.client().get(f'/books?title={fullString[0:randint(1,len(fullString))]}')
         data = json.loads(res.data)
         self.assertEqual(200, res.status_code)
         self.assertGreaterEqual(1,data["results"])
