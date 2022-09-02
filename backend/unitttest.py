@@ -62,6 +62,13 @@ class BookTestCase(unittest.TestCase):
         res = self.client().get('/books')
         data = json.loads(res.data)
         self.assertEqual(200, res.status_code)
+    
+    def test_search_book_should_appear_in_result(self):
+        res = self.client().get(f'/books?title={self.new_book["title"]}')
+        data = json.loads(res.data)
+        self.assertEqual(200, res.status_code)
+        self.assertGreaterEqual(1,data["results"])
+        self.assertEqual(self.new_book["title"], data["books"][0]["title"])
 
 # @TODO: Write at least two tests for each endpoint - one each for success and error behavior.
 #        You can feel free to write additional tests for nuanced functionality,
