@@ -29,16 +29,39 @@ class BookTestCase(unittest.TestCase):
         with self.app.app_context():
             self.db = SQLAlchemy()
             self.db.init_app(self.app)
-            # create all tables
+            book = Book(
+                title=self.new_book["title"],
+                author=self.new_book["author"],
+                rating=self.new_book["rating"]
+            )
+            self.db.session.add(book)
+            self.db.session.commit()
             self.db.create_all()
 
     def tearDown(self):
-        """Executed after reach test"""
-        pass
+        """Define test variables and initialize app."""
+        self.app = create_app()
+        self.client = self.app.test_client
+        self.database_name = "bookshelf_test"
+        self.database_path = "postgresql://{}:{}@{}/{}".format(
+            'student', 'student', 'localhost:5432', self.database_name)
+        setup_db(self.app, self.database_path)
+
+        # binds the app to the current context
+        with self.app.app_context():
+            self.db = SQLAlchemy()
+            self.db.init_app(self.app)
+            self.db.session.commit()
+            try:
+                num_rows_deleted = self.db.session.query(Book).delete()
+                self.db.session.commit()
+            except:
+                self.db.session.rollback()
 
     def test_paginated_data(self):
-        res = self.client().get('/books/')
-        self.assertEqual(200, 200)
+        res = self.client().get('/books')
+        data = json.loads(res.data)
+        self.assertEqual(200, res.status_code)
 
 # @TODO: Write at least two tests for each endpoint - one each for success and error behavior.
 #        You can feel free to write additional tests for nuanced functionality,
