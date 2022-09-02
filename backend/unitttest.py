@@ -70,6 +70,16 @@ class BookTestCase(unittest.TestCase):
         self.assertGreaterEqual(1,data["results"])
         self.assertEqual(self.new_book["title"], data["books"][0]["title"])
 
+            
+    def test_search_book_should_be_case_insensitive(self):
+        res = self.client().get(f'/books?title={self.new_book["title"].lower()}')
+        data = json.loads(res.data)
+        self.assertEqual(200, res.status_code)
+        self.assertGreaterEqual(1,data["results"])
+        self.assertEqual(self.new_book["title"], data["books"][0]["title"])
+
+    
+
 # @TODO: Write at least two tests for each endpoint - one each for success and error behavior.
 #        You can feel free to write additional tests for nuanced functionality,
 #        Such as adding a book without a rating, etc.
