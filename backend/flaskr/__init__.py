@@ -19,7 +19,7 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
     setup_db(app)
-    cors = CORS(app,resources={r"/*": {"origins": "http://localhost:3000"}})
+    cors = CORS(app,resources={r"/*": {"origins": "*"}})
 
     # CORS Headers
     @app.after_request
