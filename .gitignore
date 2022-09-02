@@ -2,3 +2,7 @@ env/
 frontend/node_modules/
 backend/__pycache__/
 backend/flaskr/__pycache__/
+branch_structure.json
+temp_auto_push.bat
+temp_interactive_push.bat
+.gitignore
