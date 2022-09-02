@@ -43,19 +43,36 @@ def create_app(test_config=None):
 
     @app.route('/books', methods=['GET'])
     def get_all_books():
-        page = request.args.get('page',1,int)
-        limit = BOOKS_PER_SHELF
-        offset = (page - 1) * limit if page > 0 else abort(404)
-        books = [book.format() for book in Book.query.offset(offset).limit(limit).all()]
-        if len(books) < 1 :
-            abort(404)
+        title_ask = request.args.get("title") 
+        if title_ask is None :
+            page = request.args.get('page',1,int)
+            limit = BOOKS_PER_SHELF
+            offset = (page - 1) * limit if page > 0 else abort(404)
+            books = [book.format() for book in Book.query.offset(offset).limit(limit).all()]
+            if len(books) < 1 :
+                abort(404)
 
-        return jsonify({
-            "success" : True,
-            "totalBooks": Book.query.count(),
-            "books": books,
-            "page": page
-        })
+            return jsonify({
+                "success" : True,
+                "totalBooks": Book.query.count(),
+                "books": books,
+                "page": page
+            })
+        else:
+            title = request.args.get("title")
+            s = f"%{title}%"
+            result = [book.format() for book in Book.query.filter(Book.title.ilike(s)).order_by(db.desc(Book.id)).all()]
+            if len(result)<1:
+                return jsonify({
+                    "success" : False,
+                    "message" : "Could not found any matching result"
+                }),404
+
+            return jsonify({
+                "success" : True,
+                "results" : len(result),
+                "books" : result
+            })
 
     @app.route('/books/<int:book_id>',methods=['PATCH'])
     def update_book_rating(book_id):
