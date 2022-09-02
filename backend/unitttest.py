@@ -37,7 +37,7 @@ class BookTestCase(unittest.TestCase):
         pass
 
     def testPaginatedData(self):
-        res = self.client().get("/books")
+        res = self.client().get('/books/')
         data = json.loads(res.data)
         self.assertEqual(200, 200)
 
