@@ -88,8 +88,15 @@ class BookTestCase(unittest.TestCase):
         self.assertEqual(200, res.status_code)
         self.assertGreaterEqual(1,data["results"])
         self.assertEqual(self.new_book["title"], data["books"][0]["title"])
-
     
+    def search_inexitant_title_should_return_empty(self):
+        fullString = self.new_book["title"][::-1] #this title dont exist
+        res = self.client().get(f'/books?title={fullString[0:randint(1,len(fullString))]}')
+        data = json.loads(res.data)
+        self.assertEqual(404, res.status_code)
+        self.assertNotIn("results",data)
+        self.assertEqual("Could not found any matching result", data["message"])
+        
 
 # @TODO: Write at least two tests for each endpoint - one each for success and error behavior.
 #        You can feel free to write additional tests for nuanced functionality,
