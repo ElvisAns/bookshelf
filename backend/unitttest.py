@@ -36,7 +36,7 @@ class BookTestCase(unittest.TestCase):
         """Executed after reach test"""
         pass
 
-    def testPaginatedData(self):
+    def test_paginated_data(self):
         res = self.client().get('/books/')
         data = json.loads(res.data)
         self.assertEqual(200, 200)
